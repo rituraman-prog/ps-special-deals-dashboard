@@ -10,6 +10,7 @@ from datetime import datetime
 from flask import Flask, render_template, request, jsonify, send_from_directory
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
+from db_helper import get_db_connection, init_database
 
 app = Flask(__name__)
 CORS(app)
@@ -31,7 +32,12 @@ def allowed_file(filename):
 
 
 def init_db():
-    """Initialize SQLite database"""
+    """Initialize database (SQLite or PostgreSQL)"""
+    # Use the db_helper which handles both SQLite and PostgreSQL
+    init_database()
+    return
+
+    # OLD CODE BELOW - keeping for reference but not used
     conn = sqlite3.connect(app.config['DATABASE'])
     cursor = conn.cursor()
 
@@ -99,10 +105,8 @@ def init_db():
 
 
 def get_db():
-    """Get database connection"""
-    conn = sqlite3.connect(app.config['DATABASE'])
-    conn.row_factory = sqlite3.Row
-    return conn
+    """Get database connection (SQLite or PostgreSQL)"""
+    return get_db_connection()
 
 
 @app.route('/')

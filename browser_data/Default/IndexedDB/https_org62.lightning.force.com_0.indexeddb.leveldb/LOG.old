@@ -1,0 +1,16 @@
+2026/08/20-13:28:54.173 963f4 Recovering log #114
+2026/08/20-13:28:54.175 963f4 Reusing old log /Users/ritu.raman/salesforce-opportunity-tool/browser_data/Default/IndexedDB/https_org62.lightning.force.com_0.indexeddb.leveldb/000114.log 
+2026/08/20-13:28:54.181 963f4 Delete type=3 #92
+2026/08/20-13:28:55.010 963f4 Compacting 1@1 + 3@2 files
+2026/08/20-13:28:55.057 963f4 Generated table #117@1: 539 keys, 3097650 bytes
+2026/08/20-13:28:55.079 963f4 Generated table #118@1: 582 keys, 3164760 bytes
+2026/08/20-13:28:55.090 963f4 Generated table #119@1: 1344 keys, 1551415 bytes
+2026/08/20-13:28:55.090 963f4 Compacted 1@1 + 3@2 files => 7813825 bytes
+2026/08/20-13:28:55.091 963f4 compacted to: files[ 0 0 3 0 0 0 0 ]
+2026/08/20-13:28:55.091 963f4 Delete type=2 #115
+2026/08/20-13:28:55.092 963f4 Delete type=2 #111
+2026/08/20-13:28:55.092 963f4 Delete type=2 #113
+2026/08/20-13:28:55.092 963f4 Delete type=2 #112
+2026/08/20-13:29:28.972 963f6 Level-0 table #121: started
+2026/08/20-13:29:28.988 963f6 Level-0 table #121: 1780490 bytes OK
+2026/08/20-13:29:28.990 963f6 Delete type=0 #114

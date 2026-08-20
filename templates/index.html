@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professional Services Special Terms Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="dashboard-wrapper">
+        <!-- Header -->
+        <header class="dashboard-header">
+            <div class="header-container">
+                <h1 class="dashboard-title">Professional Services Special Deals Dashboard</h1>
+                <p class="dashboard-subtitle">Overview of booked Professional Services projects and opportunities with special commercial terms.</p>
+            </div>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="dashboard-nav">
+            <button class="nav-item active" data-tab="dashboard">Dashboard</button>
+            <button class="nav-item" data-tab="regions">Regional Analysis</button>
+            <button class="nav-item" data-tab="upload">Upload Data</button>
+            <button class="nav-item" data-tab="opportunities">All Projects</button>
+            <button class="nav-item" data-tab="history">Upload History</button>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="dashboard-content">
+            <!-- Dashboard Tab -->
+            <div id="dashboard" class="tab-content active">
+                <!-- Filters Section -->
+                <div class="filters-bar">
+                    <select id="filter-region" class="filter-select">
+                        <option value="">All Regions</option>
+                    </select>
+                    <select id="filter-special-term" class="filter-select">
+                        <option value="">All Special Terms</option>
+                    </select>
+                    <select id="filter-status" class="filter-select">
+                        <option value="">All Status</option>
+                        <option value="Closed Won">Closed Won</option>
+                        <option value="Booked">Booked</option>
+                    </select>
+                    <input type="text" id="filter-date" class="filter-input" placeholder="Booking Date (YYYY-MM-DD)">
+                </div>
+
+                <!-- KPI Cards -->
+                <div class="kpi-grid">
+                    <div class="kpi-card" data-accent="blue">
+                        <div class="kpi-icon">📊</div>
+                        <div class="kpi-label">Total Special Deals</div>
+                        <div class="kpi-value" id="kpi-total">-</div>
+                    </div>
+                    <div class="kpi-card" data-accent="teal">
+                        <div class="kpi-icon">📋</div>
+                        <div class="kpi-label">Framework Deals</div>
+                        <div class="kpi-value" id="kpi-framework">-</div>
+                    </div>
+                    <div class="kpi-card" data-accent="orange">
+                        <div class="kpi-icon">🔒</div>
+                        <div class="kpi-label">Holdback Deals</div>
+                        <div class="kpi-value" id="kpi-holdback">-</div>
+                    </div>
+                    <div class="kpi-card" data-accent="green">
+                        <div class="kpi-icon">☂️</div>
+                        <div class="kpi-label">Umbrella Deals</div>
+                        <div class="kpi-value" id="kpi-umbrella">-</div>
+                    </div>
+                </div>
+
+                <!-- Main Chart -->
+                <div class="chart-card">
+                    <div class="chart-card-header">
+                        <h2 class="chart-title">Professional Services Special Terms by Region</h2>
+                        <p class="chart-subtitle">Distribution of booked Professional Services projects with special terms across regions.</p>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="regionalChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Secondary Charts -->
+                <div class="secondary-charts">
+                    <div class="chart-card">
+                        <div class="chart-card-header">
+                            <h3 class="chart-title-small">Special Terms Distribution by Type</h3>
+                        </div>
+                        <div class="chart-container-small">
+                            <canvas id="donutChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="chart-card">
+                        <div class="chart-card-header">
+                            <h3 class="chart-title-small">Top 5 Regions by Total Special Deals</h3>
+                        </div>
+                        <div class="chart-container-small">
+                            <canvas id="topRegionsChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Detail Table -->
+                <div class="table-card">
+                    <div class="table-card-header">
+                        <h3 class="table-title">Project Details</h3>
+                        <input type="text" id="table-search" class="table-search" placeholder="Search projects...">
+                    </div>
+                    <div class="table-wrapper">
+                        <table class="detail-table">
+                            <thead>
+                                <tr>
+                                    <th>PSA Project Name</th>
+                                    <th>Opportunity Name</th>
+                                    <th>Region</th>
+                                    <th>Special Term</th>
+                                    <th>Deal Status</th>
+                                    <th>Booking Date</th>
+                                </tr>
+                            </thead>
+                            <tbody id="detail-tbody">
+                                <tr>
+                                    <td colspan="6" class="no-data">Loading data...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Regional Analysis Tab -->
+            <div id="regions" class="tab-content">
+                <h2 class="page-title">Regional Analysis</h2>
+                <div class="table-card">
+                    <div class="table-wrapper">
+                        <table class="detail-table">
+                            <thead>
+                                <tr>
+                                    <th>Region</th>
+                                    <th>Total Projects</th>
+                                    <th>Holdback</th>
+                                    <th>Framework</th>
+                                    <th>Umbrella</th>
+                                    <th>Excluded</th>
+                                    <th>Total Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody id="region-tbody">
+                                <tr>
+                                    <td colspan="7" class="no-data">Loading regional data...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Upload Tab -->
+            <div id="upload" class="tab-content">
+                <h2 class="page-title">Upload Salesforce Data</h2>
+                <div class="upload-card">
+                    <div class="upload-instructions">
+                        <h3>Instructions:</h3>
+                        <ol>
+                            <li>Open your Salesforce report: <a href="https://org62.lightning.force.com/lightning/r/Report/00Oed00000AP8XhEAL/view" target="_blank">PSA Projects Report</a></li>
+                            <li>Click <strong>Export</strong> → <strong>Export Details</strong></li>
+                            <li>Choose <strong>CSV</strong> format</li>
+                            <li>Upload the downloaded file below</li>
+                        </ol>
+                    </div>
+                    <div class="upload-zone" id="upload-zone">
+                        <div class="upload-icon">📁</div>
+                        <p>Drag & drop your CSV file here</p>
+                        <p class="upload-or">or</p>
+                        <label for="file-input" class="upload-button">Choose File</label>
+                        <input type="file" id="file-input" accept=".csv" style="display: none;">
+                        <p class="upload-hint">Maximum file size: 16MB</p>
+                    </div>
+                    <div id="upload-status" class="upload-status" style="display: none;"></div>
+                </div>
+            </div>
+
+            <!-- All Projects Tab -->
+            <div id="opportunities" class="tab-content">
+                <h2 class="page-title">All Projects</h2>
+                <div class="filters-bar">
+                    <input type="text" id="search-input" class="filter-input" placeholder="Search by project name, account, or PM...">
+                    <select id="region-filter" class="filter-select">
+                        <option value="">All Regions</option>
+                    </select>
+                    <select id="special-term-filter" class="filter-select">
+                        <option value="">All Special Terms</option>
+                    </select>
+                    <select id="billing-status-filter" class="filter-select">
+                        <option value="">All Status</option>
+                        <option value="0">Included in Billing</option>
+                        <option value="1">Excluded from Billing</option>
+                    </select>
+                    <button id="refresh-button" class="action-button">🔄 Refresh</button>
+                    <button id="export-csv-button" class="action-button">📥 Export CSV</button>
+                </div>
+                <div class="table-card">
+                    <div class="table-wrapper">
+                        <table id="opportunities-table" class="detail-table">
+                            <thead>
+                                <tr>
+                                    <th>Project Name</th>
+                                    <th>Region</th>
+                                    <th>Special Term</th>
+                                    <th>Billing Freq</th>
+                                    <th>PM 1</th>
+                                    <th>PM 2</th>
+                                    <th>Close Date</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="opportunities-tbody">
+                                <tr>
+                                    <td colspan="9" class="no-data">No projects loaded. Upload a CSV file to get started.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Upload History Tab -->
+            <div id="history" class="tab-content">
+                <h2 class="page-title">Upload History</h2>
+                <div id="upload-history-list"></div>
+            </div>
+        </main>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <script>
+        // Chart.js configuration and initialization
+        let regionalChart, donutChart, topRegionsChart;
+        let allOpportunitiesData = [];
+        let allRegionData = {};
+
+        // Color palette
+        const COLORS = {
+            'Framework': '#0176D3',
+            'Holdback': '#F4A261',
+            'Umbrella': '#2E844A',
+            'Invoice with Subtotal(s)': '#7F8FA4',
+            'Separate Invoices': '#00A1A9',
+            'AWS SI Funding': '#9D4FBB',
+            'PubSec OF/SOW': '#E07B39',
+            'Framework + Holdback': '#C23934',
+            'Quarterly': '#5C6AC4',
+            'default': '#8B95A3'
+        };
+
+        window.addEventListener('load', function() {
+            console.log('Dashboard loaded, initializing charts...');
+
+            setTimeout(function() {
+                if (typeof Chart === 'undefined') {
+                    console.error('Chart.js not loaded!');
+                    return;
+                }
+
+                fetchDataAndRenderCharts();
+                setupDashboardFilters();
+                setInterval(fetchDataAndRenderCharts, 30000); // Refresh every 30 seconds
+            }, 500);
+        });
+
+        function setupDashboardFilters() {
+            const filterRegion = document.getElementById('filter-region');
+            const filterSpecialTerm = document.getElementById('filter-special-term');
+            const filterStatus = document.getElementById('filter-status');
+            const filterDate = document.getElementById('filter-date');
+
+            console.log('Setting up dashboard filters:', {
+                filterRegion: filterRegion ? 'found' : 'NOT FOUND',
+                filterSpecialTerm: filterSpecialTerm ? 'found' : 'NOT FOUND',
+                filterStatus: filterStatus ? 'found' : 'NOT FOUND',
+                filterDate: filterDate ? 'found' : 'NOT FOUND'
+            });
+
+            [filterRegion, filterSpecialTerm, filterStatus].forEach(filter => {
+                if (filter) {
+                    filter.addEventListener('change', function() {
+                        console.log('Filter changed:', filter.id, '=', filter.value);
+                        applyDashboardFilters();
+                    });
+                }
+            });
+
+            // Date input needs 'input' event
+            if (filterDate) {
+                filterDate.addEventListener('input', function() {
+                    console.log('Date filter changed:', filterDate.value);
+                    applyDashboardFilters();
+                });
+            }
+        }
+
+        function applyDashboardFilters() {
+            const selectedRegion = document.getElementById('filter-region')?.value || '';
+            const selectedTerm = document.getElementById('filter-special-term')?.value || '';
+            const selectedStatus = document.getElementById('filter-status')?.value || '';
+            const selectedDate = document.getElementById('filter-date')?.value || '';
+
+            console.log('Applying filters:', { selectedRegion, selectedTerm, selectedStatus, selectedDate });
+
+            // Filter opportunities data
+            let filtered = allOpportunitiesData;
+
+            if (selectedRegion) {
+                filtered = filtered.filter(opp => opp.region === selectedRegion);
+            }
+            if (selectedTerm) {
+                filtered = filtered.filter(opp => opp.special_term === selectedTerm);
+            }
+            if (selectedStatus) {
+                filtered = filtered.filter(opp => opp.stage_name === selectedStatus);
+            }
+            if (selectedDate) {
+                filtered = filtered.filter(opp => opp.close_date && opp.close_date.includes(selectedDate));
+            }
+
+            // Recalculate stats from filtered data
+            const filteredStats = calculateStats(filtered);
+            const filteredRegionData = calculateRegionData(filtered);
+
+            // Update UI
+            updateKPIs(filteredStats);
+            renderRegionalChart(filteredRegionData);
+            renderDonutChart(filteredRegionData);
+            renderTopRegionsChart(filteredRegionData);
+            populateTable(filtered);
+        }
+
+        function calculateStats(opportunities) {
+            return {
+                total_opportunities: opportunities.length,
+                framework_count: opportunities.filter(o => o.special_term === 'Framework').length,
+                holdback_count: opportunities.filter(o => o.special_term === 'Holdback').length,
+                umbrella_count: opportunities.filter(o => o.special_term === 'Umbrella').length
+            };
+        }
+
+        function calculateRegionData(opportunities) {
+            // Group by region
+            const regionMap = {};
+            const termMap = {};
+
+            opportunities.forEach(opp => {
+                const region = opp.region || 'Unknown';
+                const term = opp.special_term || 'Other';
+
+                if (!regionMap[region]) {
+                    regionMap[region] = {
+                        region: region,
+                        total: 0,
+                        total_projects: 0,
+                        holdback_count: 0,
+                        framework_count: 0,
+                        umbrella_count: 0,
+                        excluded_count: 0,
+                        total_amount: 0
+                    };
+                }
+
+                regionMap[region].total++;
+                regionMap[region].total_projects++;
+
+                if (term === 'Holdback') regionMap[region].holdback_count++;
+                if (term === 'Framework') regionMap[region].framework_count++;
+                if (term === 'Umbrella') regionMap[region].umbrella_count++;
+                if (opp.exclude_from_billing == 1) regionMap[region].excluded_count++;
+                regionMap[region].total_amount += parseFloat(opp.amount || 0);
+
+                // Add dynamic term count
+                const safeKey = term.toLowerCase().replace(/[^a-z0-9]/g, '_') + '_count';
+                regionMap[region][safeKey] = (regionMap[region][safeKey] || 0) + 1;
+
+                // Track terms
+                if (!termMap[term]) termMap[term] = 0;
+                termMap[term]++;
+            });
+
+            const regions = Object.values(regionMap).sort((a, b) => b.total - a.total);
+            const special_terms = Object.entries(termMap).map(([term, count]) => ({ term, count }))
+                .sort((a, b) => b.count - a.count);
+
+            return { regions, special_terms, billing_frequencies: [] };
+        }
+
+        function fetchDataAndRenderCharts() {
+            Promise.all([
+                fetch('/api/stats').then(r => r.json()),
+                fetch('/api/region-summary').then(r => r.json()),
+                fetch('/api/opportunities').then(r => r.json())
+            ])
+            .then(([stats, regionData, opportunities]) => {
+                // Store data globally for filtering
+                allOpportunitiesData = opportunities;
+                allRegionData = regionData;
+
+                updateKPIs(stats);
+                renderRegionalChart(regionData);
+                renderDonutChart(regionData);
+                renderTopRegionsChart(regionData);
+                populateTable(opportunities);
+                populateFilters(regionData);
+            })
+            .catch(error => console.error('Error fetching data:', error));
+        }
+
+        function updateKPIs(stats) {
+            document.getElementById('kpi-total').textContent = stats.total_opportunities || '0';
+            document.getElementById('kpi-framework').textContent = stats.framework_count || '0';
+            document.getElementById('kpi-holdback').textContent = stats.holdback_count || '0';
+            document.getElementById('kpi-umbrella').textContent = stats.umbrella_count || '0';
+        }
+
+        function renderRegionalChart(data) {
+            const ctx = document.getElementById('regionalChart');
+            if (!ctx) return;
+
+            // Get top 10 regions sorted by total count
+            const sortedRegions = data.regions
+                .slice(0, 10)
+                .sort((a, b) => b.total - a.total);
+
+            const regionLabels = sortedRegions.map(r => r.region || 'Unknown');
+
+            // Get all unique special terms
+            const allTerms = [...new Set(data.special_terms.map(t => t.term))];
+
+            // Create datasets for horizontal stacked bar
+            const datasets = allTerms.map(term => {
+                const color = COLORS[term] || COLORS['default'];
+                return {
+                    label: term,
+                    data: regionLabels.map(region => {
+                        const regionData = sortedRegions.find(r => r.region === region);
+                        if (!regionData) return 0;
+                        return regionData[term.toLowerCase().replace(/[^a-z0-9]/g, '_') + '_count'] || 0;
+                    }),
+                    backgroundColor: color,
+                    borderRadius: 4,
+                    borderSkipped: false
+                };
+            });
+
+            if (regionalChart) regionalChart.destroy();
+
+            regionalChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: regionLabels,
+                    datasets: datasets
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 15,
+                                font: { size: 11, family: 'Inter' },
+                                color: '#5B6B79',
+                                usePointStyle: true,
+                                pointStyle: 'rect'
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            padding: 12,
+                            titleFont: { size: 13, weight: 'bold' },
+                            bodyFont: { size: 12 },
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.dataset.label || '';
+                                    const value = context.parsed.x;
+                                    const total = context.chart.data.datasets.reduce((sum, ds) => {
+                                        return sum + (ds.data[context.dataIndex] || 0);
+                                    }, 0);
+                                    const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
+                                    return `${label}: ${value} projects (${percentage}%)`;
+                                },
+                                footer: function(tooltipItems) {
+                                    if (tooltipItems.length === 0) return '';
+                                    const dataIndex = tooltipItems[0].dataIndex;
+                                    const total = tooltipItems[0].chart.data.datasets.reduce((sum, ds) => {
+                                        return sum + (ds.data[dataIndex] || 0);
+                                    }, 0);
+                                    return `Total: ${total} projects`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            stacked: true,
+                            grid: { color: '#E5E9EB', drawBorder: false },
+                            ticks: {
+                                font: { size: 11, family: 'Inter' },
+                                color: '#6E7985'
+                            },
+                            title: {
+                                display: true,
+                                text: 'Number of Booked Projects',
+                                font: { size: 12, weight: '600', family: 'Inter' },
+                                color: '#3E4C59'
+                            }
+                        },
+                        y: {
+                            stacked: true,
+                            grid: { display: false },
+                            ticks: {
+                                font: { size: 11, weight: '500', family: 'Inter' },
+                                color: '#3E4C59'
+                            }
+                        }
+                    },
+                    interaction: {
+                        mode: 'nearest',
+                        axis: 'y',
+                        intersect: false
+                    }
+                }
+            });
+        }
+
+        function renderDonutChart(data) {
+            const ctx = document.getElementById('donutChart');
+            if (!ctx) return;
+
+            const terms = data.special_terms.slice(0, 8); // Top 8 terms
+            const labels = terms.map(t => t.term);
+            const values = terms.map(t => t.count);
+            const colors = labels.map(label => COLORS[label] || COLORS['default']);
+
+            if (donutChart) donutChart.destroy();
+
+            donutChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: values,
+                        backgroundColor: colors,
+                        borderWidth: 2,
+                        borderColor: '#ffffff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                            labels: {
+                                padding: 10,
+                                font: { size: 11, family: 'Inter' },
+                                color: '#5B6B79',
+                                boxWidth: 12
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            padding: 10,
+                            titleFont: { size: 12 },
+                            bodyFont: { size: 11 },
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.label || '';
+                                    const value = context.parsed;
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const percentage = ((value / total) * 100).toFixed(1);
+                                    return `${label}: ${value} (${percentage}%)`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function renderTopRegionsChart(data) {
+            const ctx = document.getElementById('topRegionsChart');
+            if (!ctx) return;
+
+            const topRegions = data.regions.slice(0, 5);
+            const labels = topRegions.map(r => r.region || 'Unknown');
+            const values = topRegions.map(r => r.total);
+
+            if (topRegionsChart) topRegionsChart.destroy();
+
+            topRegionsChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Total Special Deals',
+                        data: values,
+                        backgroundColor: '#0176D3',
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            padding: 10,
+                            titleFont: { size: 12 },
+                            bodyFont: { size: 11 }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: { color: '#E5E9EB', drawBorder: false },
+                            ticks: {
+                                font: { size: 11, family: 'Inter' },
+                                color: '#6E7985'
+                            }
+                        },
+                        y: {
+                            grid: { display: false },
+                            ticks: {
+                                font: { size: 11, weight: '500', family: 'Inter' },
+                                color: '#3E4C59'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function populateTable(opportunities) {
+            const tbody = document.getElementById('detail-tbody');
+            if (!tbody || !opportunities || opportunities.length === 0) {
+                if (tbody) tbody.innerHTML = '<tr><td colspan="6" class="no-data">No data available</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = opportunities.slice(0, 100).map(opp => `
+                <tr>
+                    <td>${opp.psa_project_name || '-'}</td>
+                    <td>${opp.opportunity_name || '-'}</td>
+                    <td>${opp.region || '-'}</td>
+                    <td><span class="badge badge-${(opp.special_term || '').toLowerCase().replace(/\s+/g, '-')}">${opp.special_term || '-'}</span></td>
+                    <td>${opp.stage_name || '-'}</td>
+                    <td>${opp.close_date || '-'}</td>
+                </tr>
+            `).join('');
+        }
+
+        function populateFilters(data) {
+            // Populate region filters
+            const regionSelects = document.querySelectorAll('#filter-region, #region-filter');
+            regionSelects.forEach(select => {
+                const currentValue = select.value;
+                select.innerHTML = '<option value="">All Regions</option>' +
+                    data.regions.map(r => `<option value="${r.region}">${r.region}</option>`).join('');
+                select.value = currentValue;
+            });
+
+            // Populate special term filters
+            const termSelects = document.querySelectorAll('#filter-special-term, #special-term-filter');
+            termSelects.forEach(select => {
+                const currentValue = select.value;
+                select.innerHTML = '<option value="">All Special Terms</option>' +
+                    data.special_terms.map(t => `<option value="${t.term}">${t.term}</option>`).join('');
+                select.value = currentValue;
+            });
+        }
+    </script>
+</body>
+</html>

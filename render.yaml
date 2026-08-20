@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: ps-special-deals-dashboard
+    env: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.9.18
+      - key: FLASK_ENV
+        value: production
+      - key: SALESFORCE_USERNAME
+        sync: false
+      - key: SALESFORCE_PASSWORD
+        sync: false
+      - key: SALESFORCE_TOKEN
+        sync: false
+      - key: SALESFORCE_DOMAIN
+        value: login
+    autoDeploy: true

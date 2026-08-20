@@ -1,0 +1,44 @@
+# Environment variables
+.env
+.env.local
+.env.production
+
+# Virtual environment
+venv/
+env/
+*.pyc
+__pycache__/
+
+# Database
+data/
+*.db
+*.sqlite
+
+# Uploads
+uploads/
+*.csv
+
+# Logs
+*.log
+logs/
+/tmp/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Playwright browsers
+ms-playwright/
+
+# Browser data
+browser_data/
+
+# Test files
+test_*.py
+*_test.py

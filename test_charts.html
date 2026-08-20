@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chart Test</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background: #f5f5f5; }
+        .container { max-width: 1200px; margin: 0 auto; background: white; padding: 20px; border-radius: 10px; }
+        .chart-box { margin: 20px 0; padding: 20px; background: #fff; border: 1px solid #ddd; border-radius: 8px; }
+        canvas { max-height: 400px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Chart Test Page</h1>
+        <p>Testing if Chart.js works with your data</p>
+
+        <div class="chart-box">
+            <h2>Region Chart</h2>
+            <canvas id="testRegionChart"></canvas>
+        </div>
+
+        <div class="chart-box">
+            <h2>Special Terms Chart</h2>
+            <canvas id="testSpecialTermsChart"></canvas>
+        </div>
+    </div>
+
+    <script>
+        console.log('Test page loaded');
+        console.log('Chart.js available:', typeof Chart !== 'undefined');
+
+        // Fetch data and create charts
+        fetch('/api/region-summary')
+            .then(response => {
+                console.log('API response received');
+                return response.json();
+            })
+            .then(data => {
+                console.log('Data:', data);
+                console.log('Regions:', data.regions.length);
+                console.log('Special terms:', data.special_terms.length);
+
+                // Create region chart
+                const regionCtx = document.getElementById('testRegionChart').getContext('2d');
+                const topRegions = data.regions.slice(0, 10);
+
+                new Chart(regionCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: topRegions.map(r => r.region),
+                        datasets: [{
+                            label: 'Projects',
+                            data: topRegions.map(r => r.total_projects),
+                            backgroundColor: 'rgba(102, 126, 234, 0.8)',
+                            borderColor: 'rgba(102, 126, 234, 1)',
+                            borderWidth: 2,
+                            borderRadius: 8
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        plugins: {
+                            legend: { display: false }
+                        },
+                        scales: {
+                            y: { beginAtZero: true }
+                        }
+                    }
+                });
+
+                console.log('Region chart created');
+
+                // Create special terms chart
+                const termsCtx = document.getElementById('testSpecialTermsChart').getContext('2d');
+
+                new Chart(termsCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: data.special_terms.map(t => t.term),
+                        datasets: [{
+                            data: data.special_terms.map(t => t.count),
+                            backgroundColor: [
+                                'rgba(240, 147, 251, 0.9)',
+                                'rgba(79, 172, 254, 0.9)',
+                                'rgba(67, 233, 123, 0.9)',
+                                'rgba(255, 184, 77, 0.9)',
+                                'rgba(153, 102, 255, 0.9)',
+                                'rgba(255, 99, 132, 0.9)',
+                                'rgba(54, 162, 235, 0.9)',
+                                'rgba(255, 206, 86, 0.9)'
+                            ],
+                            borderWidth: 2
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        plugins: {
+                            legend: {
+                                position: 'bottom'
+                            }
+                        }
+                    }
+                });
+
+                console.log('Special terms chart created');
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.body.innerHTML += '<p style="color:red;">Error loading data: ' + error + '</p>';
+            });
+    </script>
+</body>
+</html>

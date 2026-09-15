@@ -1,6 +1,24 @@
-# Salesforce Opportunity Tool - CSV Upload Dashboard
+# Professional Services Special Deals Dashboard
 
-A web-based tool to monitor, analyze, and manage booked Salesforce opportunities with dashboard, CSV upload, and reporting capabilities.
+[![Live Demo](https://img.shields.io/badge/🌐_Live_Demo-Click_Here-success?style=for-the-badge)](https://kept-themselves-sales-arrow.trycloudflare.com)
+[![GitHub](https://img.shields.io/badge/GitHub-Public-blue?style=for-the-badge&logo=github)](https://github.com/rituraman-prog/ps-special-deals-dashboard)
+[![Status](https://img.shields.io/badge/Status-Live-brightgreen?style=for-the-badge)]()
+
+> 🌐 **[VIEW LIVE DASHBOARD →](https://kept-themselves-sales-arrow.trycloudflare.com)**
+
+An executive-style analytics dashboard for tracking Professional Services projects with special commercial terms. Built for Salesforce Org62 teams.
+
+---
+
+## 🎯 What You Can Do
+
+- 📊 **View Real-Time KPIs**: Total deals, Framework, Holdback, Umbrella counts
+- 📈 **Interactive Charts**: Regional breakdown with horizontal stacked bars  
+- 🔍 **Advanced Filters**: Filter by region, special term, status, and date
+- 🌐 **Access Anywhere**: Share the public URL with your team
+- 📱 **Responsive Design**: Works on desktop, tablet, and mobile
+
+---
 
 ## ✨ Features
 
